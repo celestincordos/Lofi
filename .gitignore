@@ -17,3 +17,6 @@ model/*.png
 
 # Checkpoints
 checkpoints
+
+#Server
+venv/
