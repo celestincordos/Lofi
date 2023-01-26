@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.config.js",
     "serve": "webpack serve --open --config webpack.dev.js"
   },
   "dependencies": {
@@ -26,7 +26,6 @@
     "ts-loader": "^9.2.2",
     "typescript": "^4.2.4",
     "webpack": "^5.37.1",
-    "webpack-cli": "^4.7.2",
     "webpack-merge": "^5.7.3"
   },
   "devDependencies": {
@@ -36,7 +35,8 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.3",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
   },
   "prettier": {
     "singleQuote": true,

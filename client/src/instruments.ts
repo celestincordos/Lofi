@@ -263,8 +263,6 @@ export const getInstrumentFilters = (instrument: Instrument) => {
     }
 
     default:
-      return [
-        ...DefaultFilters
-      ];
+      return [...DefaultFilters];
   }
 };

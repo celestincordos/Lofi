@@ -100,7 +100,8 @@ export const randomColor = (seed: number) =>
   `hsl(${360 * random(seed)},${25 + 70 * random(seed + 1)}%,${85 + 10 * random(seed + 2)}%)`;
 
 /** Compresses a given string into a Base64-encoded string using deflate */
-export const compress = (input: string) => btoa(String.fromCharCode.apply(null, deflate(input)));
+export const compress = (input: string) =>
+  btoa(String.fromCharCode.apply(null, [...new Uint8Array(deflate(input))]));
 
 /** Decompresses a given Base64-encoded string using inflate */
 export const decompress = (input: string) =>
