@@ -11,6 +11,12 @@ class Player {
   /** Current list of tracks in queue */
   playlist: Track[] = [];
 
+  recorder: MediaRecorder;
+
+  chunks: any[];
+
+  myAudio: HTMLAudioElement = document.querySelector('custom-audio');
+
   /** Current track in playlist being played */
   currentPlayingIndex: number;
 
@@ -249,6 +255,15 @@ class Player {
       this.isPlaying = true;
       Tone.Transport.start();
       this.seek(Tone.Transport.seconds);
+      const actx = Tone.context;
+      const dest = actx.createMediaStreamDestination();
+      this.recorder = new MediaRecorder(dest.stream);
+      this.recorder.ondataavailable = (evt) => this.chunks.push(evt.data);
+      this.recorder.onstop = (evt) => {
+        const blob = new Blob(this.chunks, { type: 'audio/ogg; codecs=opus' });
+        this.myAudio.src = URL.createObjectURL(blob);
+      };
+      this.recorder.start();
     } else if (this.playlist.length > 0) {
       this.playTrack(0);
     }
@@ -286,6 +301,7 @@ class Player {
     Tone.Transport.stop();
     this.instruments?.forEach((s) => s.dispose());
     this.samplePlayers?.forEach((s) => s.forEach((t) => t.dispose()));
+    this.recorder.stop();
   }
 
   /** Stops playback and unloads the current track in the UI */
