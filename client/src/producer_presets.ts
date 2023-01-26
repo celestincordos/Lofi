@@ -118,8 +118,21 @@ export const Preset3: ProducerPreset = new ProducerPreset({
 /** Bass patterns, in tuples [startBeat, duration] */
 export const BassPatterns: [number, number][][] = [
   [[0, 4]],
-  [[0, 2], [2, 2]],
-  [[0, 3], [3, 1]],
-  [[0, 3.5], [3.5, 0.5]],
-  [[0, 1.5], [1.5, 1.5], [3, 1]]
+  [
+    [0, 2],
+    [2, 2]
+  ],
+  [
+    [0, 3],
+    [3, 1]
+  ],
+  [
+    [0, 3.5],
+    [3.5, 0.5]
+  ],
+  [
+    [0, 1.5],
+    [1.5, 1.5],
+    [3, 1]
+  ]
 ];

@@ -40,7 +40,8 @@ player.updateLocalStorage = updateLocalStorage;
 // load playlist in URL if possible
 const queryString = window.location.search;
 if (queryString.length > 0) {
-  const compressedPlaylist = queryString === '?default' ? DEFAULT_OUTPUTPARAMS : queryString.substring(1);
+  const compressedPlaylist =
+    queryString === '?default' ? DEFAULT_OUTPUTPARAMS : queryString.substring(1);
   try {
     const decompressed = decompress(compressedPlaylist);
     const outputParams: OutputParams[] = JSON.parse(decompressed);
@@ -136,20 +137,24 @@ seekbar.addEventListener('input', () => {
 });
 let wasPaused = false;
 let seekbarDragging = false;
-['mousedown', 'touchstart'].forEach((e) => seekbar.addEventListener(e, () => {
-  seekbarDragging = true;
-  wasPaused = !player.isPlaying;
-  if (!wasPaused) {
-    player.pause();
-  }
-}));
-['mouseup', 'touchend'].forEach((e) => seekbar.addEventListener(e, () => {
-  seekbarDragging = false;
-  player.seek(seekbar.valueAsNumber);
-  if (!wasPaused) {
-    player.play();
-  }
-}));
+['mousedown', 'touchstart'].forEach((e) =>
+  seekbar.addEventListener(e, () => {
+    seekbarDragging = true;
+    wasPaused = !player.isPlaying;
+    if (!wasPaused) {
+      player.pause();
+    }
+  })
+);
+['mouseup', 'touchend'].forEach((e) =>
+  seekbar.addEventListener(e, () => {
+    seekbarDragging = false;
+    player.seek(seekbar.valueAsNumber);
+    if (!wasPaused) {
+      player.play();
+    }
+  })
+);
 
 // Visualizer
 const visualizer = document.getElementById('visualizer');
@@ -401,14 +406,54 @@ copyButton.addEventListener('click', async () => {
 
 // Media Session API
 const actionsAndHandlers = [
-  ['play', () => { player.play(); }],
-  ['pause', () => { player.pause(); }],
-  ['previoustrack', () => { player.playPrevious(); }],
-  ['nexttrack', () => { player.playNext(); }],
-  ['seekbackward', (details: MediaSessionActionDetails) => { player.seekRelative(-5); }],
-  ['seekforward', (details: MediaSessionActionDetails) => { player.seekRelative(5); }],
-  ['seekto', (details: MediaSessionActionDetails) => { player.seek(details.seekTime); }],
-  ['stop', () => { player.unload(); }]
+  [
+    'play',
+    () => {
+      player.play();
+    }
+  ],
+  [
+    'pause',
+    () => {
+      player.pause();
+    }
+  ],
+  [
+    'previoustrack',
+    () => {
+      player.playPrevious();
+    }
+  ],
+  [
+    'nexttrack',
+    () => {
+      player.playNext();
+    }
+  ],
+  [
+    'seekbackward',
+    (details: MediaSessionActionDetails) => {
+      player.seekRelative(-5);
+    }
+  ],
+  [
+    'seekforward',
+    (details: MediaSessionActionDetails) => {
+      player.seekRelative(5);
+    }
+  ],
+  [
+    'seekto',
+    (details: MediaSessionActionDetails) => {
+      player.seek(details.seekTime);
+    }
+  ],
+  [
+    'stop',
+    () => {
+      player.unload();
+    }
+  ]
 ];
 for (const [action, handler] of actionsAndHandlers) {
   try {
