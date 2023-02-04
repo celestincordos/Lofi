@@ -158,17 +158,6 @@ class Player {
       return;
     }
 
-    // Create the recorder and star trecording:
-    this.actx = Tone.context;
-    this.dest = this.actx.createMediaStreamDestination();
-    this.recorder = new MediaRecorder(this.dest.stream);
-    this.recorder.ondataavailable = (evt) => this.chunks.push(evt.data);
-    this.recorder.onstop = (evt) => {
-      const blob = new Blob(this.chunks, { type: 'audio/ogg; codecs=opus' });
-      this.myAudio.src = URL.createObjectURL(blob);
-    };
-    this.recorder.start();
-
     // Start Tone ?:
     await Tone.start();
     Tone.Transport.bpm.value = this.currentTrack.bpm;
@@ -270,7 +259,16 @@ class Player {
   play() {
     if (this.currentTrack) {
       this.isPlaying = true;
-
+      // Create the recorder and star trecording:
+      this.actx = Tone.context;
+      this.dest = this.actx.createMediaStreamDestination();
+      this.recorder = new MediaRecorder(this.dest.stream);
+      this.recorder.ondataavailable = (evt) => this.chunks.push(evt.data);
+      this.recorder.onstop = (evt) => {
+        const blob = new Blob(this.chunks, { type: 'audio/ogg; codecs=opus' });
+        this.myAudio.src = URL.createObjectURL(blob);
+      };
+      this.recorder.start();
       Tone.Transport.start();
       this.seek(Tone.Transport.seconds);
     } else if (this.playlist.length > 0) {
@@ -304,6 +302,9 @@ class Player {
 
   /** Stops the current track, and disposes Tone.js objects */
   stop() {
+    if (this.recorder) {
+      this.recorder.stop();
+    }
     this.isPlaying = false;
     this.gain?.disconnect();
     Tone.Transport.cancel();
@@ -312,9 +313,6 @@ class Player {
     this.instruments?.forEach((s) => s.dispose());
     this.samplePlayers?.forEach((s) => s.forEach((t) => t.dispose()));
     // this.recorder.stop();
-    if (this.recorder) {
-      this.recorder.stop();
-    }
   }
 
   /** Stops playback and unloads the current track in the UI */
