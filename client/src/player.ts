@@ -16,7 +16,7 @@ class Player {
 
   playlist: Track[] = [];
 
-  recorder: MediaRecorder;
+  recorder: Tone.Recorder;
 
   chunks: any[] = [];
 
@@ -166,6 +166,7 @@ class Player {
     this.instruments = new Map();
 
     // load samples
+    this.recorder = new Tone.Recorder();
     for (const [sampleGroupName, sampleIndex] of this.currentTrack.samples) {
       const sampleGroup = Samples.SAMPLEGROUPS.get(sampleGroupName);
       const player = new Tone.Player({
@@ -175,7 +176,7 @@ class Player {
         fadeIn: '8n',
         fadeOut: '8n'
       })
-        .chain(...sampleGroup.getFilters(), this.gain, Tone.Destination)
+        .chain(...sampleGroup.getFilters(), this.gain, Tone.Destination, this.recorder)
         .sync();
 
       if (!this.samplePlayers.has(sampleGroupName)) {
@@ -259,16 +260,17 @@ class Player {
   play() {
     if (this.currentTrack) {
       this.isPlaying = true;
-      // Create the recorder and star trecording:
-      this.actx = Tone.context;
-      this.dest = this.actx.createMediaStreamDestination();
-      this.recorder = new MediaRecorder(this.dest.stream);
-      this.recorder.ondataavailable = (evt) => this.chunks.push(evt.data);
-      this.recorder.onstop = (evt) => {
-        const blob = new Blob(this.chunks, { type: 'audio/ogg; codecs=opus' });
-        this.myAudio.src = URL.createObjectURL(blob);
-      };
+      // // Create the recorder and star trecording:
+      // this.actx = Tone.context;
+      // this.dest = this.actx.createMediaStreamDestination();
+      // this.recorder = new MediaRecorder(this.dest.stream);
+      // this.recorder.ondataavailable = (evt) => this.chunks.push(evt.data);
+      // this.recorder.onstop = (evt) => {
+      //   const blob = new Blob(this.chunks, { type: 'audio/ogg; codecs=opus' });
+      //   this.myAudio.src = URL.createObjectURL(blob);
+      // };
       this.recorder.start();
+
       Tone.Transport.start();
       this.seek(Tone.Transport.seconds);
     } else if (this.playlist.length > 0) {
@@ -302,9 +304,20 @@ class Player {
 
   /** Stops the current track, and disposes Tone.js objects */
   stop() {
-    if (this.recorder) {
-      this.recorder.stop();
-    }
+    // if (this.recorder) {
+    //   this.recorder.stop();
+    // }
+    setTimeout(async () => {
+      // the recorded audio is returned as a blob
+      const recording = await this.recorder.stop();
+      // create a blob from the recording
+      const url = URL.createObjectURL(recording);
+      this.myAudio.src = url;
+      // const anchor = document.createElement('a');
+      // anchor.download = 'recording.webm';
+      // anchor.href = url;
+      // anchor.click();
+    }, 1000);
     this.isPlaying = false;
     this.gain?.disconnect();
     Tone.Transport.cancel();
