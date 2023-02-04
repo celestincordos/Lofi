@@ -5,6 +5,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: ['./src/index.ts', './src/style.scss'],
+  devtool: 'cheap-source-map',
   module: {
     rules: [
       {
@@ -40,6 +41,7 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
+    // devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     clean: true
   }
 };

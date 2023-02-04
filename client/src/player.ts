@@ -13,9 +13,9 @@ class Player {
 
   recorder: MediaRecorder;
 
-  chunks: any[];
+  chunks: any[] = [];
 
-  myAudio: HTMLAudioElement = document.querySelector('custom-audio');
+  myAudio: HTMLAudioElement = document.querySelector('#custom-audio');
 
   /** Current track in playlist being played */
   currentPlayingIndex: number;
@@ -255,6 +255,7 @@ class Player {
       this.isPlaying = true;
       Tone.Transport.start();
       this.seek(Tone.Transport.seconds);
+
       const actx = Tone.context;
       const dest = actx.createMediaStreamDestination();
       this.recorder = new MediaRecorder(dest.stream);
@@ -299,9 +300,12 @@ class Player {
     this.gain?.disconnect();
     Tone.Transport.cancel();
     Tone.Transport.stop();
+
     this.instruments?.forEach((s) => s.dispose());
     this.samplePlayers?.forEach((s) => s.forEach((t) => t.dispose()));
-    this.recorder.stop();
+    if (this.recorder) {
+      this.recorder.stop();
+    }
   }
 
   /** Stops playback and unloads the current track in the UI */
