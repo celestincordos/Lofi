@@ -361,7 +361,7 @@ class Player {
       this.seek(0);
       return;
     }
-
+    const title = this.currentTrack.title;
     let nextTrackIndex = null;
     if (this.shuffle) {
       if (this.shuffleQueue.length === 0) this.fillShuffleQueue();
@@ -380,6 +380,19 @@ class Player {
     } else {
       this.unload();
     }
+    // Stop the recording and download the file
+    setTimeout(async () => {
+      // the recorded audio is returned as a blob
+      const recording = await this.recorder.stop();
+      // create a blob from the recording
+      const url = URL.createObjectURL(recording);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      console.log(title);
+      anchor.download = `${title}.mp4`;
+      anchor.click();
+      this.myAudio.src = url;
+    }, 1000);
   }
 
   /** Generates a 'shuffle queue' */
