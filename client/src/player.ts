@@ -189,7 +189,7 @@ class Player {
     const instrumentVolumes = new Map();
     for (const instrument of this.currentTrack.instruments) {
       const toneInstrument = getInstrument(instrument)
-        .chain(...getInstrumentFilters(instrument), this.gain, Tone.Destination, this.recorder)
+        .chain(...getInstrumentFilters(instrument), this.gain, Tone.Destination)
         .sync();
       this.instruments.set(instrument, toneInstrument);
       instrumentVolumes.set(toneInstrument, toneInstrument.volume.value);
@@ -307,7 +307,17 @@ class Player {
     // if (this.recorder) {
     //   this.recorder.stop();
     // }
-
+    setTimeout(async () => {
+      // the recorded audio is returned as a blob
+      const recording = await this.recorder.stop();
+      // create a blob from the recording
+      const url = URL.createObjectURL(recording);
+      this.myAudio.src = url;
+      // const anchor = document.createElement('a');
+      // anchor.download = 'recording.webm';
+      // anchor.href = url;
+      // anchor.click();
+    }, 1000);
     this.isPlaying = false;
     this.gain?.disconnect();
     Tone.Transport.cancel();
@@ -345,7 +355,7 @@ class Player {
     }
   }
 
-  /** Plays the next track ...apprently, it is not used at the beginning  */
+  /** Plays the next track */
   playNext() {
     if (this.repeat === RepeatMode.ONE) {
       this.seek(0);
@@ -370,18 +380,6 @@ class Player {
     } else {
       this.unload();
     }
-    // Stop the recording and download the file
-    setTimeout(async () => {
-      // the recorded audio is returned as a blob
-      const recording = await this.recorder.stop();
-      // create a blob from the recording
-      const url = URL.createObjectURL(recording);
-      // this.myAudio.src = url;
-      const anchor = document.createElement('a');
-      anchor.download = `${this.currentTrack.outputParams.title}.mp4`;
-      anchor.href = url;
-      anchor.click();
-    }, 1000);
   }
 
   /** Generates a 'shuffle queue' */
