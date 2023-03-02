@@ -351,7 +351,7 @@ class Player {
       this.seek(0);
       return;
     }
-
+    const title = this.currentTrack.title;
     let nextTrackIndex = null;
     if (this.shuffle) {
       if (this.shuffleQueue.length === 0) this.fillShuffleQueue();
@@ -376,11 +376,12 @@ class Player {
       const recording = await this.recorder.stop();
       // create a blob from the recording
       const url = URL.createObjectURL(recording);
-      // this.myAudio.src = url;
       const anchor = document.createElement('a');
-      anchor.download = `${this.currentTrack.outputParams.title}.mp4`;
       anchor.href = url;
+      console.log(title);
+      anchor.download = `${title}.mp4`;
       anchor.click();
+      this.myAudio.src = url;
     }, 1000);
   }
 
