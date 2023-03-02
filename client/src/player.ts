@@ -309,10 +309,10 @@ class Player {
     // }
     setTimeout(async () => {
       // the recorded audio is returned as a blob
-      const recording = await this.recorder.stop();
-      // create a blob from the recording
-      const url = URL.createObjectURL(recording);
-      this.myAudio.src = url;
+      // const recording = await this.recorder.stop();
+      // // create a blob from the recording
+      // const url = URL.createObjectURL(recording);
+      // this.myAudio.src = url;
       // const anchor = document.createElement('a');
       // anchor.download = 'recording.webm';
       // anchor.href = url;
