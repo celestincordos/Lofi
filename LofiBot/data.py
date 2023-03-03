@@ -34,7 +34,7 @@ class Track:
 
 class DataManager:
     # The ids of the trackl that are being created.... # so this class is "static" ? Do I really want that ? It should not matter....
-    pending_ids: list[str] = []
+    tracks: dict[Track] = {}
 
     def __init__(self):
         self.existing_ids = set(os.listdir("../ressources"))
