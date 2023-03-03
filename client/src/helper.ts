@@ -75,6 +75,7 @@ export const measuresToSeconds = (measures: number, bpm: number) => {
 };
 
 /** Returns a number sampled from a standard normal distribution using the Box–Muller transform */
+// Te interval is [-4, 4]
 export const randn = () => {
   let u = 0;
   let v = 0;
