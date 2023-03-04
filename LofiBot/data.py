@@ -36,7 +36,8 @@ class Track:
         return np.array_equal(self.features, __o.features)
 
     def prepare_download(self) -> os.path:
-        path = os.mkdir(os.path.join(DOWNLOADED_PATH, self.id))
+        path = os.path.join(DOWNLOADED_PATH, self.id)
+        os.mkdir(path)
         return path
 
 

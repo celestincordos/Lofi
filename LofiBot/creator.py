@@ -1,7 +1,8 @@
 from playwright.async_api import async_playwright
-from playwright.async_api import Browser, Page, Locator, Playwright, Download
+from playwright.async_api import Browser, Page, Locator, Playwright, Download, Response
 import asyncio
 import os
+import logging
 
 from data import DataManager, Track
 
@@ -47,16 +48,21 @@ class Creator:
         suggested_filename = download.suggested_filename
         server_hash = suggested_filename.split('.')[0]
         if server_hash != self.track.id:
-            self._finished = True
-            raise Exception(
+            # self._finished = True
+            logging.info(
                 f"My hash ({self.track.id}) does not match the one that was received from the server ({server_hash}) !!")
-        path = self.track.prepare_download()
+        folder_path = self.track.prepare_download()
+        path = os.path.join(folder_path,
+                            f"{self.track.id}.wma")
         await download.save_as(path)
-        await download.delete()
         self._finished = True
-        # await self.p.stop()
 
-    async def _has_finished(self, page: Page):
+    async def _handle_response(self, response: Response):
+        url = response.url.split("?")[0]
+        if url == "https://lofiserver.jacobzhang.de/decode":
+            logging.info(response)
+
+    async def _wait_until_finish(self, page: Page):
         while not self._finished:
             await page.wait_for_timeout(500)
 
@@ -67,10 +73,12 @@ class Creator:
             self.p = p
             browser: Browser = await self.p.chromium.launch(headless=False)
             page = await browser.new_page()
+            page.on("response", lambda response: asyncio.create_task(
+                self._handle_response(response)))
             page.on('download', lambda download: asyncio.create_task(
                 self._handle_download(download)))
 
             await page.goto("http://127.0.0.1:8080/")
             await self._produce_new(page=page)
             await self._generate_and_save(page=page)
-            await self._has_finished(page)
+            await self._wait_until_finish(page)
