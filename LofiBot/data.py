@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from hashlib import md5
+import torch
 
 
 class Track:
@@ -10,18 +11,20 @@ class Track:
         # create a hash for vector mu
         hash = ""
         # first 20 characters are each sampled from 5 entries
+
+        mu = torch.from_numpy(np.array([self.features]))
         for i in range(0, 100, 5):
-            hash += str((self.features[0][i:i +
+            hash += str((mu[0][i:i +
                         1].abs().sum() * 587).int().item())[-1]
         # last 4 characters are the beginning of the MD5 hash of the whole vector
-        hash2 = int(md5(self.features.numpy()).hexdigest(), 16)
+        hash2 = int(md5(mu.numpy()).hexdigest(), 16)
         hash = f"#{hash}{hash2}"[:25]
         return hash
 
-    def __init__(self, features: np.array[np.float32], id: str = None) -> None:
+    def __init__(self, features: np.array, id: str = None) -> None:
         self.features: np.array[np.float32] = features
         # will still have to test this syntax right here... But it should work according to the first tests
-        self.id: str = id or self._encode(self.features)
+        self.id: str = id or self._encode()
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Track):
@@ -37,7 +40,7 @@ class DataManager:
     tracks: dict[Track] = {}
 
     def __init__(self):
-        self.existing_ids = set(os.listdir("../ressources"))
+        self.existing_ids = set(os.listdir("./ressources"))
 
-    def track_exists(self, id: str) -> bool:
-        return (id in self.existing_ids)
+    def track_exists(self, track: Track) -> bool:
+        return (track.id in self.existing_ids)

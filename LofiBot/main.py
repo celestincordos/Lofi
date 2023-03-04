@@ -1,2 +1,10 @@
+from orchestrator import Orchestrator
+
+
 def main():
-    return
+    orchestrator = Orchestrator(1)
+    orchestrator.create()
+
+
+if __name__ == "__main__":
+    main()

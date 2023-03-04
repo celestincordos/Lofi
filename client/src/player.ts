@@ -389,7 +389,7 @@ class Player {
       const anchor = document.createElement('a');
       anchor.href = url;
       console.log(title);
-      anchor.download = `${title}.mp4`;
+      anchor.download = `${title}.wma`;
       anchor.click();
       this.myAudio.src = url;
     }, 1000);
