@@ -10,6 +10,7 @@ from data import DataManager, Track
 class Creator:
 
     def __init__(self, id: int, data_manager: DataManager) -> None:
+        self.track: Track
         self.data_manager = data_manager
         self._id = id
         self.p: Playwright
@@ -36,6 +37,7 @@ class Creator:
             features = [float(x)for x in inputs_vector]
             track = Track(features=features)
             if not self.data_manager.track_exists(track):
+                self.track = track
                 return  # This breaks the while loop
 
     async def _handle_download(self, download: Download):
@@ -43,7 +45,13 @@ class Creator:
 
         # Get the suggested filename and save the download to the download path
         suggested_filename = download.suggested_filename
-        await download.save_as(os.path.join('./ressources', suggested_filename))
+        server_hash = suggested_filename.split('.')[0]
+        if server_hash != self.track.id:
+            self._finished = True
+            raise Exception(
+                f"My hash ({self.track.id}) does not match the one that was received from the server ({server_hash}) !!")
+        path = self.track.prepare_download()
+        await download.save_as(path)
         await download.delete()
         self._finished = True
         # await self.p.stop()

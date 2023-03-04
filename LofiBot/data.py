@@ -2,6 +2,7 @@ import os
 import numpy as np
 from hashlib import md5
 import torch
+from settings import DOWNLOADED_PATH, USED_PATH
 
 
 class Track:
@@ -18,11 +19,11 @@ class Track:
                         1].abs().sum() * 587).int().item())[-1]
         # last 4 characters are the beginning of the MD5 hash of the whole vector
         hash2 = int(md5(mu.numpy()).hexdigest(), 16)
-        hash = f"#{hash}{hash2}"[:25]
+        hash = f"#{hash}{hash2}"
         return hash
 
     def __init__(self, features: np.array, id: str = None) -> None:
-        self.features: np.array[np.float32] = features
+        self.features: np.array[np.float64] = features
         # will still have to test this syntax right here... But it should work according to the first tests
         self.id: str = id or self._encode()
 
@@ -34,13 +35,18 @@ class Track:
             return self.id == __o.id
         return np.array_equal(self.features, __o.features)
 
+    def prepare_download(self) -> os.path:
+        path = os.mkdir(os.path.join(DOWNLOADED_PATH, self.id))
+        return path
+
 
 class DataManager:
     # The ids of the trackl that are being created.... # so this class is "static" ? Do I really want that ? It should not matter....
     tracks: dict[Track] = {}
 
     def __init__(self):
-        self.existing_ids = set(os.listdir("./ressources"))
+        self.existing_ids = set(os.listdir(
+            DOWNLOADED_PATH) + os.listdir(USED_PATH))
 
     def track_exists(self, track: Track) -> bool:
         return (track.id in self.existing_ids)
