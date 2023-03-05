@@ -60,7 +60,9 @@ class Creator:
     async def _handle_response(self, response: Response):
         url = response.url.split("?")[0]
         if url == "https://lofiserver.jacobzhang.de/decode":
-            logging.info(response)
+            json = await response.json()
+            self.track.add_json(json)
+            # logging.info(json)
 
     async def _wait_until_finish(self, page: Page):
         while not self._finished:
@@ -82,3 +84,4 @@ class Creator:
             await self._produce_new(page=page)
             await self._generate_and_save(page=page)
             await self._wait_until_finish(page)
+            return

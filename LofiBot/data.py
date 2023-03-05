@@ -2,6 +2,9 @@ import os
 import numpy as np
 from hashlib import md5
 import torch
+import logging
+import json
+
 from settings import DOWNLOADED_PATH, USED_PATH
 
 
@@ -22,10 +25,14 @@ class Track:
         hash = f"#{hash}{hash2}"
         return hash
 
+    def add_json(self, json_string: str) -> None:
+        self.json_track = json.loads(json_string)
+
     def __init__(self, features: np.array, id: str = None) -> None:
         self.features: np.array[np.float64] = features
         # will still have to test this syntax right here... But it should work according to the first tests
         self.id: str = id or self._encode()
+        self.json_track: dict
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Track):
@@ -35,9 +42,19 @@ class Track:
             return self.id == __o.id
         return np.array_equal(self.features, __o.features)
 
+    def __str__(self) -> str:
+        return self.id
+
     def prepare_download(self) -> os.path:
         path = os.path.join(DOWNLOADED_PATH, self.id)
         os.mkdir(path)
+        if self.json_track:
+            name = self.json_track["title"]
+            with open(os.path.join(path, f"{name}.json"), "w+") as file:
+                json.dump(self.json_track, file)
+        else:
+            logging.info(
+                f"Track {self} does not have a json file associated with it at the time of saving. Saving regardless...")
         return path
 
 
@@ -50,4 +67,5 @@ class DataManager:
             DOWNLOADED_PATH) + os.listdir(USED_PATH))
 
     def track_exists(self, track: Track) -> bool:
+        # this uses the id of the track, the one that I create
         return (track.id in self.existing_ids)
