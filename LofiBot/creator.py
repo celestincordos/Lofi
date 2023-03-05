@@ -3,6 +3,7 @@ from playwright.async_api import Browser, Page, Locator, Playwright, Download, R
 import asyncio
 import os
 import logging
+from settings import FILE_EXTENSION
 
 from data import DataManager, Track
 
@@ -53,8 +54,9 @@ class Creator:
                 f"My hash ({self.track.id}) does not match the one that was received from the server ({server_hash}) !!")
         folder_path = self.track.prepare_download()
         path = os.path.join(folder_path,
-                            f"{self.track.id}.wma")
+                            f"{self.track.id}.{FILE_EXTENSION}")
         await download.save_as(path)
+        # self.track.clean_folder()
         self._finished = True
 
     async def _handle_response(self, response: Response):
@@ -79,9 +81,12 @@ class Creator:
                 self._handle_response(response)))
             page.on('download', lambda download: asyncio.create_task(
                 self._handle_download(download)))
-
-            await page.goto("http://127.0.0.1:8080/")
-            await self._produce_new(page=page)
-            await self._generate_and_save(page=page)
+            try:
+                await page.goto("http://127.0.0.1:8080/")
+                await self._produce_new(page=page)
+                await self._generate_and_save(page=page)
+            except Exception as e:
+                logging.info("This error happened: {e}")
+                self._finished = True
             await self._wait_until_finish(page)
             return

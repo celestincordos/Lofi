@@ -4,6 +4,10 @@ from hashlib import md5
 import torch
 import logging
 import json
+from pydub import AudioSegment
+from pathlib import Path
+from miniaudio import decode
+from settings import FILE_EXTENSION
 
 from settings import DOWNLOADED_PATH, USED_PATH
 
@@ -25,14 +29,12 @@ class Track:
         hash = f"#{hash}{hash2}"
         return hash
 
-    def add_json(self, json_string: str) -> None:
-        self.json_track = json.loads(json_string)
-
     def __init__(self, features: np.array, id: str = None) -> None:
         self.features: np.array[np.float64] = features
         # will still have to test this syntax right here... But it should work according to the first tests
         self.id: str = id or self._encode()
         self.json_track: dict
+        self.folder_path: str
 
     def __eq__(self, __o: object) -> bool:
         if not isinstance(__o, Track):
@@ -45,8 +47,28 @@ class Track:
     def __str__(self) -> str:
         return self.id
 
+    def add_json(self, json_string: str) -> None:
+        self.json_track = json.loads(json_string)
+
+    def clean_folder(self) -> None:
+        files = os.listdir(self.folder_path)
+        for filename in files:
+            if f".{FILE_EXTENSION}" in filename:
+                full_path: str = os.path.join(self.folder_path, filename)
+                audio_bytes = Path(full_path).read_bytes()
+                vector_bytes_str = str(audio_bytes)
+                vector_bytes_str_enc = vector_bytes_str.encode()
+                bytes_np_dec = vector_bytes_str_enc.decode(
+                    'unicode-escape').encode('ISO-8859-1')[2:-1]
+                array = np.frombuffer(bytes_np_dec)
+                # array = np.frombuffer(audio_bytes)
+                cleaned_audio = AudioSegment(array.tobytes())
+                # os.remove(full_path)
+                cleaned_audio.export(full_path, format="mp3")
+
     def prepare_download(self) -> os.path:
         path = os.path.join(DOWNLOADED_PATH, self.id)
+        self.folder_path = path
         os.mkdir(path)
         if self.json_track:
             name = self.json_track["title"]
