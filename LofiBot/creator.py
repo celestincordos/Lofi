@@ -3,7 +3,7 @@ from playwright.async_api import Browser, Page, Locator, Playwright, Download, R
 import asyncio
 import os
 import logging
-from settings import FILE_EXTENSION
+from settings import FILE_EXTENSION, UNCONVERTED_PATH
 
 from data import DataManager, Track
 
@@ -52,8 +52,9 @@ class Creator:
             # self._finished = True
             logging.info(
                 f"My hash ({self.track.id}) does not match the one that was received from the server ({server_hash}) !!")
-        folder_path = self.track.prepare_download()
-        path = os.path.join(folder_path,
+        self.track.prepare_download()
+
+        path = os.path.join(UNCONVERTED_PATH,
                             f"{self.track.id}.{FILE_EXTENSION}")
         await download.save_as(path)
         # self.track.clean_folder()
