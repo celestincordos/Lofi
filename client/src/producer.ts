@@ -118,9 +118,9 @@ class Producer {
     });
     this.melodies = params.melodies;
 
-    // this.introLength = this.produceIntro();
+    this.introLength = this.produceIntro(); //actually I need this.introLength later, that is why I cannot comment it
     this.mainLength = this.produceMain();
-    // this.outroLength = this.produceOutro();
+    this.outroLength = this.produceOutro();
 
     this.numMeasures = this.introLength + this.mainLength + this.outroLength;
     this.produceFx();
@@ -167,7 +167,7 @@ class Producer {
     // TODO: produce a more interesting intro
 
     // measure of silence
-    return 1;
+    return 0;
   }
 
   /** Produces the track's main part and returns the number of measures */
@@ -195,17 +195,19 @@ class Producer {
 
   /** Produces the track's outro and returns the number of measures */
   produceOutro(): number {
+    return 0;
+
     // the measure where the outro part starts
-    const measureStart = this.introLength + this.mainLength;
+    // const measureStart = this.introLength + this.mainLength;
 
-    // play first two chords (for fade out)
-    const measures = this.produceIteration(measureStart, 2);
-    this.outroLength = measuresToSeconds(measures, this.bpm) * 2;
+    // // play first two chords (for fade out)
+    // const measures = this.produceIteration(measureStart, 2);
+    // this.outroLength = measuresToSeconds(measures, this.bpm) * 2;
 
-    // add an empty measure of silence at the end
-    const length = measures + 1;
+    // // add an empty measure of silence at the end
+    // const length = measures + 1;
 
-    return length;
+    // return length;
   }
 
   /** Produces FX for the whole track */

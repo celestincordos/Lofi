@@ -2,6 +2,7 @@ import os
 import logging
 from tqdm import tqdm
 from pathlib import Path
+from shutil import move
 
 from settings import UNCONVERTED_PATH, CONVERTED_PATH, DOWNLOADED_PATH
 
@@ -20,7 +21,7 @@ def remove_extension(path: str) -> str:
 def change_extension(filename: str, new_extension: str) -> str:
     parts = filename.split('.')
     parts[-1] = new_extension
-    return ''.join(parts)
+    return ''.join(parts[:-1]) + '.'+parts[-1]
 
 
 class Copier:
@@ -31,19 +32,23 @@ class Copier:
         existing_tracks = os.listdir(DOWNLOADED_PATH)
         logging.info("Copying converted files:")
         for file in tqdm(converted_files):
-            new_filename = change_extension(file, "mp3")
+            # new_filename = change_extension(file, "mp3")
+            old_filename = f'#{change_extension(file, "webm")}'
             try:
-                os.remove(os.path(UNCONVERTED_PATH, new_filename
-                                  ))
+                os.remove(os.path.join(UNCONVERTED_PATH, old_filename
+                                       ))
             except FileNotFoundError as e:
                 logging.warning(
-                    "The file {file} was removed already it seems... Moving on... Here is the error: {e}")
-            track_folder = remove_extension(file)
-            try:
-                Path(os.path.join(converted_files, file)).rename(
-                    os.path.join(DOWNLOADED_PATH, track_folder, new_filename))
-            except Exception as e:
-                logging.warning(f"Track {track_folder} does not exist ! ")
+                    f"The file {old_filename} was removed already it seems... Moving on... Here is the error: {e}")
+            track_folder = f"#{remove_extension(file)}"
+            old_path: str = ""
+            # try:
+            old_path = os.path.join(CONVERTED_PATH, file)
+            new_path = os.path.join(
+                DOWNLOADED_PATH, track_folder, f"#{file}")
+            move(old_path, new_path)
+            # except Exception as e:
+            #     logging.warning(f"Track {old_path} does not exist ! ")
 
 
 def main():

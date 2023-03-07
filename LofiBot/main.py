@@ -4,7 +4,7 @@ import logging
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    orchestrator = Orchestrator(1)
+    orchestrator = Orchestrator(4)
     orchestrator.create()
 
 
