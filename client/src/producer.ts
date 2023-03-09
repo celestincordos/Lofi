@@ -195,19 +195,19 @@ class Producer {
 
   /** Produces the track's outro and returns the number of measures */
   produceOutro(): number {
-    return 0;
+    // return 0;
 
     // the measure where the outro part starts
-    // const measureStart = this.introLength + this.mainLength;
+    const measureStart = this.introLength + this.mainLength;
 
-    // // play first two chords (for fade out)
-    // const measures = this.produceIteration(measureStart, 2);
-    // this.outroLength = measuresToSeconds(measures, this.bpm) * 2;
+    // play first two chords (for fade out)
+    const measures = this.produceIteration(measureStart, 2);
+    this.outroLength = measuresToSeconds(measures, this.bpm) * 2;
 
-    // // add an empty measure of silence at the end
-    // const length = measures + 1;
+    // add an empty measure of silence at the end
+    const length = measures + 1;
 
-    // return length;
+    return length;
   }
 
   /** Produces FX for the whole track */
