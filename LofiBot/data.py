@@ -12,7 +12,7 @@ from tqdm import tqdm
 from pathlib import Path
 from shutil import move
 
-from settings import UNCONVERTED_PATH, CONVERTED_PATH, DOWNLOADED_PATH, FILE_EXTENSION, USED_PATH
+from settings import UNCONVERTED_PATH, CONVERTED_PATH, DOWNLOADED_PATH, FILE_EXTENSION, FILE_EXTENSION_CONVERTED,  USED_PATH
 
 
 class Track:
@@ -98,7 +98,13 @@ class DataManager:
 
     def mark_used(self, ids: list[str]):
         for id in ids:
-            # TODO.... copy folder from downloaded to used, then it will used by the producer
+            old_path = os.path.join(DOWNLOADED_PATH, id)
+            new_path = os.path.join(USED_PATH, id)
+            move(old_path, new_path)
+
+    # This considers that the track is already marked as 'used'.... IMPORTANT !
+    def get_track_path(self, id: str):
+        return os.path.join(USED_PATH, id, f"{id}.{FILE_EXTENSION_CONVERTED}")
 
 
 class UnexistingTrack (Exception):
