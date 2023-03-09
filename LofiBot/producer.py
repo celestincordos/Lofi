@@ -12,7 +12,7 @@ class Producer:
 
     data_manager = DataManager()
 
-    def __init__(self, track_repetitions: int = 5) -> None:
+    def __init__(self, track_repetitions: int = 1) -> None:
         self.working_directory = self._create_working_directory()
         self.track_repetitions = track_repetitions
 
