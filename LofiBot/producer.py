@@ -24,14 +24,14 @@ class Producer:
             new_folder += 1
         return os.path.join(base_folder, str(new_folder))
 
-    def _compose(self, track_paths: list[str]):
+    def _compose(self, track_paths: dict[str]):
         os.mkdir(self.working_directory)
         logging.info(f'Composing...')
-        for (i, path) in enumerate(tqdm(track_paths)):
+        for (key, path) in (tqdm(track_paths.items())):
             audio: AudioSegment = AudioSegment.from_file(
                 path, FILE_EXTENSION_CONVERTED)
             composed = audio * self.track_repetitions
-            composed.export(os.path.join(self.working_directory, f"{i}.{FILE_EXTENSION_CONVERTED}"),
+            composed.export(os.path.join(self.working_directory, f"{key}.{FILE_EXTENSION_CONVERTED}"),
                             format=FILE_EXTENSION_CONVERTED)
 
     def compose_random(self, nr_of_tracks: int = 10, accept_existing: bool = False):
@@ -55,7 +55,8 @@ class Producer:
                 existing = self.data_manager.used_ids
                 work_ids = sample(existing, nr_of_tracks -
                                   len(work_ids)) + existing
-        track_paths = [self.data_manager.get_track_path(id) for id in work_ids]
+        track_paths = {id: self.data_manager.get_track_path(
+            id) for id in work_ids}
         self._compose(track_paths)
 
 
