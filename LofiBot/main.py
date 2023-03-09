@@ -5,7 +5,7 @@ import logging
 def main():
     logging.basicConfig(level=logging.INFO)
     orchestrator = Orchestrator(4)
-    orchestrator.create()
+    orchestrator.create(2)
 
 
 if __name__ == "__main__":
