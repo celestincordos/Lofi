@@ -22,22 +22,24 @@ class Producer:
         new_folder = 0
         while str(new_folder) in other_folders:
             new_folder += 1
-        return os.path.join(base_folder, new_folder)
+        return os.path.join(base_folder, str(new_folder))
 
     def _compose(self, track_paths: list[str]):
+        os.mkdir(self.working_directory)
         logging.info(f'Composing...')
         for (i, path) in enumerate(tqdm(track_paths)):
-            audio = AudioSegment.from_file(path, FILE_EXTENSION_CONVERTED)
+            audio: AudioSegment = AudioSegment.from_file(
+                path, FILE_EXTENSION_CONVERTED)
             composed = audio * self.track_repetitions
-            composed.export(os.path.join(self.working_directory,
-                            format=FILE_EXTENSION_CONVERTED))
+            composed.export(os.path.join(self.working_directory, f"{i}.{FILE_EXTENSION_CONVERTED}"),
+                            format=FILE_EXTENSION_CONVERTED)
 
     def compose_random(self, nr_of_tracks: int = 10, accept_existing: bool = False):
         free_ids = self.data_manager.free_ids
         work_ids = []  # the ones that are being used for this compilation...
 
         # IF there are enough free tracks...
-        if len(self.data_manager.free_ids) < nr_of_tracks:  # the good case...
+        if len(self.data_manager.free_ids) >= nr_of_tracks:  # the good case...
             work_ids = sample(free_ids, k=nr_of_tracks)
             self.data_manager.mark_used(work_ids)
         else:
@@ -58,6 +60,7 @@ class Producer:
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     producer = Producer()
     producer.compose_random(4)
 
