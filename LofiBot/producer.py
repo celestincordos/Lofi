@@ -63,7 +63,7 @@ class Producer:
 def main():
     logging.basicConfig(level=logging.INFO)
     producer = Producer()
-    producer.compose_random(4)
+    producer.compose_random(10)
 
 
 if __name__ == "__main__":

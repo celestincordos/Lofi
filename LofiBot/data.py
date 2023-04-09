@@ -140,12 +140,12 @@ class Copier:
             except FileNotFoundError as e:
                 logging.warning(
                     f"The file {old_filename} was removed already it seems... Moving on... Here is the error: {e}")
-            track_folder = f"#{remove_extension(file)}"
+            track_folder = f"{remove_extension(file)}"
             old_path: str = ""
             # try:
             old_path = os.path.join(CONVERTED_PATH, file)
             new_path = os.path.join(
-                DOWNLOADED_PATH, track_folder, f"#{file}")
+                DOWNLOADED_PATH, track_folder, file)
             move(old_path, new_path)
             # except Exception as e:
             #     logging.warning(f"Track {old_path} does not exist ! ")

@@ -15,6 +15,5 @@ class Orchestrator:
         tasks = [creator.create() for creator in self.creators]
         files = await asyncio.gather(*tasks)
 
-    def create(self, iterations: int = 3):
-        for i in range(iterations):
-            asyncio.run(self.async_create())
+    def create(self, iterations: int = 1):
+        asyncio.run(self.async_create())

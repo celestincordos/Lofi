@@ -4,8 +4,10 @@ import logging
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    orchestrator = Orchestrator(4)
-    orchestrator.create(2)
+
+    for i in range(5):
+        orchestrator = Orchestrator(4)
+        orchestrator.create(1)
 
 
 if __name__ == "__main__":
