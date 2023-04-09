@@ -146,7 +146,12 @@ class Copier:
             old_path = os.path.join(CONVERTED_PATH, file)
             new_path = os.path.join(
                 DOWNLOADED_PATH, track_folder, file)
-            move(old_path, new_path)
+            try:
+                move(old_path, new_path)
+            except FileNotFoundError as e:
+                logging.error(
+                    f"Did not find folder for {file}. Will delete the file...{e}")
+                os.remove(old_path)
             # except Exception as e:
             #     logging.warning(f"Track {old_path} does not exist ! ")
 
