@@ -173,7 +173,7 @@ class Producer {
   /** Produces the track's main part and returns the number of measures */
   produceMain(): number {
     // const numberOfIterations = Math.ceil(24 / this.chords.length);
-    const numberOfIterations = 20;
+    const numberOfIterations = 12;
     const length = this.chords.length * numberOfIterations;
 
     // the measure where the main part starts
