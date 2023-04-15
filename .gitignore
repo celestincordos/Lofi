@@ -23,3 +23,7 @@ server/venv/
 
 # Ressources
 ressources/
+
+#Bot... Not sure I am using a venv for that...
+venv/
+
