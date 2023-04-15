@@ -50,7 +50,7 @@ class Creator:
         server_hash = suggested_filename.split('.')[0]
         if server_hash != self.track.id:
             # self._finished = True
-            logging.info(
+            logging.debug(
                 f"My hash ({self.track.id}) does not match the one that was received from the server ({server_hash}) !!")
         self.track.prepare_download()
 
@@ -76,7 +76,7 @@ class Creator:
         # self.p: Playwright = await async_playwright().start()
         async with async_playwright() as p:
             self.p = p
-            browser: Browser = await self.p.chromium.launch(headless=False)
+            browser: Browser = await self.p.chromium.launch(headless=True)
             page = await browser.new_page()
             page.on("response", lambda response: asyncio.create_task(
                 self._handle_response(response)))
