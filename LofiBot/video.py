@@ -24,11 +24,11 @@ class Editor:
         audio.export(output_name, format="mp3")
 
     def _compile_video(self, image_file: str, folder_name: str, audio_output: str, video_output: str) -> None:
-        bashCommand = f"ffmpeg -loop 1 -i {os.path.join (folder_name,image_file)} -i {audio_output} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {video_output}"
+        bashCommand = f"ffmpeg -hwaccel cuda -loop 1 -i {os.path.join (folder_name,image_file)} -i {audio_output} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {video_output}"
         os.system(bashCommand)
 
-    def _move_files(self, folder_base_name: str, audio_output: str, video_output: str) -> None:
-        destination = os.path.join(EDITS_PATH, folder_base_name)
+    def _move_files(self, base_folder_name: str, audio_output: str, video_output: str) -> None:
+        destination = os.path.join(EDITS_PATH, base_folder_name)
         os.mkdir(destination)
         move(audio_output, destination)
         move(video_output, destination)
@@ -49,16 +49,20 @@ class Editor:
         self._compile_audio(audio_files=audio_files, folder_name=folder_name)
         self._compile_video(image_file=image_file, folder_name=folder_name,
                             audio_output=audio_output, video_output=video_output)
-        self._move_files(folder_name=base_folder_name,
+        self._move_files(base_folder_name=base_folder_name,
                          audio_output=audio_output, video_output=video_output)
         return
 
     def make_edits(self):
-        dirs = os.listdir(PRODUCED_PATH)
+        dirs = set(os.listdir(PRODUCED_PATH))
+        existing_dirs = set(os.listdir(EDITS_PATH))
         logging.info(f"Making the edits for {len(dirs)} directories")
-        length = len(dirs)
-        for i, folder_name in enumerate(dirs):
-            logging.info("Compiling folder {i}/{length}")
+
+        compile_dirs = dirs - existing_dirs
+        length = len(compile_dirs)
+        for i, folder_name in enumerate(compile_dirs):
+
+            logging.info(f"Compiling folder {i}/{length}")
             full_folder_name = os.path.join(PRODUCED_PATH, folder_name)
             self.compile_folder(folder_name=full_folder_name,
                                 base_folder_name=folder_name)
