@@ -24,7 +24,7 @@ class Editor:
         audio.export(output_name, format="mp3")
 
     def _compile_video(self, image_file: str, folder_name: str, audio_output: str, video_output: str) -> None:
-        bashCommand = f"ffmpeg -hwaccel cuda -loop 1 -i {os.path.join (folder_name,image_file)} -i {audio_output} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {video_output}"
+        bashCommand = f"ffmpeg -hwaccel cuda -filter:v fps=1 -loop 1 -i {os.path.join (folder_name,image_file)} -i {audio_output} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest {video_output}"
         os.system(bashCommand)
 
     def _move_files(self, base_folder_name: str, audio_output: str, video_output: str) -> None:
