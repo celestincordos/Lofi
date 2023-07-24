@@ -87,7 +87,7 @@ class Creator:
                 await self._produce_new(page=page)
                 await self._generate_and_save(page=page)
             except Exception as e:
-                logging.info("This error happened: {e}")
+                logging.info(f"This error happened: {e}")
                 self._finished = True
             await self._wait_until_finish(page)
             return

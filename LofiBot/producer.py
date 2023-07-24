@@ -34,7 +34,7 @@ class Producer:
             composed.export(os.path.join(self.working_directory, f"{key}.{FILE_EXTENSION_CONVERTED}"),
                             format=FILE_EXTENSION_CONVERTED)
 
-    def compose_random(self, nr_of_tracks: int = 10, accept_existing: bool = False):
+    def compose_random(self, nr_of_tracks: int = 10, accept_existing: bool = True):
         free_ids = self.data_manager.free_ids
         work_ids = []  # the ones that are being used for this compilation...
 
@@ -50,11 +50,13 @@ class Producer:
                 return
             # If you do accept, I will give you alle the free ones plus used ones
             else:
+                logging.info(
+                    f"There are only {len(self.data_manager.free_ids)} free tracks but a composition of {nr_of_tracks} was requested... Will continue")
                 # use the free
                 self.data_manager.mark_used(free_ids)
                 existing = self.data_manager.used_ids
-                work_ids = sample(existing, nr_of_tracks -
-                                  len(work_ids)) + existing
+                work_ids = set(sample(existing.union(existing), nr_of_tracks -
+                                      len(work_ids)))
         track_paths = {id: self.data_manager.get_track_path(
             id) for id in work_ids}
         self._compose(track_paths)
@@ -63,7 +65,7 @@ class Producer:
 def main():
     logging.basicConfig(level=logging.INFO)
     producer = Producer()
-    producer.compose_random(10)
+    producer.compose_random(7)
 
 
 if __name__ == "__main__":

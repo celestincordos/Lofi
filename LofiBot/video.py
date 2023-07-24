@@ -59,6 +59,7 @@ class Editor:
         logging.info(f"Making the edits for {len(dirs)} directories")
 
         compile_dirs = dirs - existing_dirs
+        # compile_dirs = list(compile_dirs).sort()
         length = len(compile_dirs)
         for i, folder_name in enumerate(compile_dirs):
 

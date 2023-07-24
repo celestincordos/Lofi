@@ -1,7 +1,14 @@
 # LOFI Client
 
-* Prerequisites: Node.js 14
-* Recommended: Visual Studio Code
+- Prerequisites: Node.js 14
+- Recommended: Visual Studio Code
+
+## Run
+
+```bash
+nvm use 14.8.0
+npm start
+```
 
 ## Develop
 

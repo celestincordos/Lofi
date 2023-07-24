@@ -133,7 +133,7 @@ class Copier:
         logging.info("Copying converted files:")
         for file in tqdm(converted_files):
             # new_filename = change_extension(file, "mp3")
-            old_filename = f'#{change_extension(file, "webm")}'
+            old_filename = f'{change_extension(file, "webm")}'
             try:
                 os.remove(os.path.join(UNCONVERTED_PATH, old_filename
                                        ))
